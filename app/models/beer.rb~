@@ -1,2 +1,14 @@
 class Beer < ActiveRecord::Base
+include RatingAverage
+belongs_to :brewery
+has_many :ratings, dependent: :destroy
+  def average_rating
+    
+    ratings.inject(0.0) { |summa, luku| summa + luku.score } / ratings.size
+  end
+  def to_s
+    "#{name}, #{brewery.name}"
+  end
 end
+
+
