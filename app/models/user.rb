@@ -6,14 +6,21 @@ class User < ActiveRecord::Base
       errors.add(:password, "must contain an uppercase character")
     end            
   end
+  
   def contains_number
     if password !~ /\d/
       errors.add(:password, "must contain a number")
     end
   end
+  
+  def favorite_beer
+    return nil if ratings.empty?
+    ratings.order(score: :desc).limit(1).first.beer
+  end
+  
   validates :username, uniqueness: true, 
-      length: { minimum: 3 },
-      length: { maximum: 15 }
+      length: { minimum: 3,
+                maximum: 15 }
   validates :password, length: { minimum: 4 }
   validate :contains_uppercase
   validate :contains_number
@@ -21,4 +28,6 @@ class User < ActiveRecord::Base
   
   has_many :ratings, dependent: :destroy
   has_many :memberships, dependent: :destroy
+  has_many :beers, through: :ratings
+  has_many :beer_clubs, through: :memberships
 end
