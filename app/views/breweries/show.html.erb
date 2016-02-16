@@ -22,5 +22,5 @@
  Has <%= pluralize(@brewery.ratings.length, 'rating') %>, average <%= @brewery.average_rating %>
 <% end %></p>
 
-<%= link_to 'Edit', edit_brewery_path(@brewery) %> |
-<%= link_to 'Back', breweries_path %>
+<%= link_to 'Edit', edit_brewery_path(@brewery) if current_user %> 
+<%= link_to 'Destroy', @brewery, method: :delete, data: { confirm: 'Are you sure?' } if current_user %>
