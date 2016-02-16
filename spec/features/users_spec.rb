@@ -3,13 +3,14 @@ require 'rails_helper'
 include Helpers
 
 describe "User" do
-  before :each do
-    FactoryGirl.create :user
-  end
+  let!(:user) { FactoryGirl.create :user }
 
   describe "who has signed up" do
     it "can signin with right credentials" do
-      sign_in(username:"Pekka", password:"Foobar1")
+      visit signin_path
+      fill_in('username', with:'Pekka')
+      fill_in('password', with:'Foobar1')
+      click_button('Log in')
 
       expect(page).to have_content 'Welcome back!'
       expect(page).to have_content 'Pekka'
@@ -32,5 +33,26 @@ describe "User" do
     expect{
       click_button('Create User')
     }.to change{User.count}.by(1)
+  end
+
+  describe "have rated some beers" do
+    before :each do
+      @brewery = FactoryGirl.create :brewery, name:"Sierra Nevada"
+      other_brewery = FactoryGirl.create :brewery
+      create_beers_with_ratings(user, "lager", other_brewery, 10, 20, 15)
+      create_beers_with_ratings(user, "IPA", @brewery, 25, 20)
+      create_beers_with_ratings(user, "stout", other_brewery, 20, 23, 22)
+    end
+
+    it "the favorite style is shown at user's page" do
+      visit user_path(user)
+      expect(page).to have_content 'Favorite style IPA'
+    end
+
+    it "the favorite brewery is shown at user's page" do
+      visit user_path(user)
+      expect(page).to have_content 'Favorite brewery Sierra Nevada'
+    end
+
   end
 end
