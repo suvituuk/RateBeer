@@ -7,6 +7,7 @@ gem 'rails', '4.2.5'
 group :development, :test do
   gem 'sqlite3'
   gem "better_errors"
+  gem 'httparty'
 end
 
 group :test do
@@ -14,7 +15,7 @@ group :test do
   gem 'capybara'
   gem 'launchy'
   gem 'simplecov', require: false
-
+  gem 'webmock'
 end
 
 group :production do

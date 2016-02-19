@@ -5,6 +5,7 @@ include Helpers
 describe "Beer" do
   before :each do
     FactoryGirl.create :brewery, name:"testbrew"
+    FactoryGirl.create :style
   end
 
   describe "if a user logged in" do
@@ -17,7 +18,7 @@ describe "Beer" do
       visit new_beer_path
       save_and_open_page
       fill_in('beer_name', with:'CrapIPA')
-      select('Lager', from:'beer[style]')
+#      select('European pale lager', from:'beer[style]')
       expect{
         click_button "Create Beer"
       }.to change{Beer.count}.from(0).to(1)
