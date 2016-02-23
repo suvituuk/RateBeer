@@ -25,6 +25,7 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
+    @user.update_attribute(:active, true)
 
     respond_to do |format|
       if @user.save
@@ -62,6 +63,15 @@ class UsersController < ApplicationController
         format.json { head :no_content }
       end
     end
+  end
+  
+  def toggle_activity
+    user = User.find(params[:id])
+    user.update_attribute :active, (not user.active)
+
+    new_status = user.active? ? "active" : "frozen"
+
+    redirect_to :back, notice:"account status changed to #{new_status}"
   end
 
   private

@@ -1,10 +1,16 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <h2><%= @user.username %></h2>
+  <h2><%= @user.username %>
+  <% if not @user.active  %>
+    <% if current_user && current_user.admin %>
+      <span class="label label-info">account frozen</span>
+    <% end %>
+  <% end %>
+  </h2>
 </p>
 
-<p> has made <%= pluralize(@user.ratings.length, 'rating') %>, average <%= @user.average_rating %> </p>
+<p> has made <%= pluralize(@user.ratings.length, 'rating') %>, average <%= round(@user.average_rating) %> </p>
 
 <% if @user.ratings.any? %>
   <p>Favorite style <%= @user.favorite_style.name %></p>
@@ -34,8 +40,13 @@
       </li>
     <% end %>
   </ul>
-<% if @user == current_user %>
-  <%= link_to 'Edit', edit_user_path(@user) %> |
-  <%= link_to 'Destroy', @user, method: :delete, data: { confirm: 'Are you sure?' } %> |
-<% end %>
-<%= link_to 'Back', users_path %>
+  <% if current_user && current_user.admin %>
+    <% if @user.active %>
+      <%= link_to "freeze account", toggle_activity_user_path(@user.id), method: :post, class: "btn btn-danger" %>
+    <% else %>
+      <%= link_to "reactivate account", toggle_activity_user_path(@user.id), method: :post, class: "btn btn-danger" %>
+    <% end %>
+  <% end %>
+  <% if @user == current_user %>
+    <%= link_to 'delete', @user, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+  <% end %>

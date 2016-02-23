@@ -33,28 +33,34 @@ class User < ActiveRecord::Base
   
   
   def favorite_style
-    return nil if ratings.empty?
-
-    rated = ratings.map{ |r| r.beer.style }.uniq
-    rated.sort_by { |style| -rating_of_style(style) }.first
+    favorite :style
   end
 
   def favorite_brewery
+    favorite :brewery
+  end
+  
+  def favorite(category)
     return nil if ratings.empty?
 
-    rated = ratings.map{ |r| r.beer.brewery }.uniq
-    rated.sort_by { |brewery| -rating_of_brewery(brewery) }.first
+    rated = ratings.map{ |r| r.beer.send(category) }.uniq
+    rated.sort_by { |item| -rating_of(category, item) }.first
   end
-
+  
   private
 
-  def rating_of_style(style)
-    ratings_of = ratings.select{ |r| r.beer.style==style }
+  def rating_of(category, item)
+    ratings_of = ratings.select{ |r| r.beer.send(category)==item }
     ratings_of.map(&:score).inject(&:+) / ratings_of.count.to_f
   end
-
-  def rating_of_brewery(brewery)
-    ratings_of = ratings.select{ |r| r.beer.brewery==brewery }
-    ratings_of.map(&:score).inject(&:+) / ratings_of.count.to_f
-  end
+  
+  def self.most_active(n)
+   sorted_by_number_of_ratings = User.all.sort_by{ |u| -(u.ratings.size||0) }
+   if sorted_by_number_of_ratings.size < n
+      return sorted_by_number_of_ratings
+    end
+   sorted_by_number_of_ratings.take(n)
+   # palauta listalta parhaat n kappaletta
+   # miten? ks. http://www.ruby-doc.org/core-2.1.0/Array.html
+ end
 end
