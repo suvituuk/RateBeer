@@ -22,6 +22,7 @@
 
   <tbody>
   <% @top_users.each do |user| %>
+    <% if not user.ratings.empty? %>
       <tr>
         <td><%= link_to user.username, user %></td>
         <td><%= user.favorite_beer %></td>
@@ -29,6 +30,7 @@
         <td><%= user.favorite_brewery.name %></td>
         <td><%= user.ratings.size %></td>
       </tr>
+    <%end%>
   <% end %>
   </tbody>
 </table>

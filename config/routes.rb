@@ -15,6 +15,9 @@ get 'signin', to: 'sessions#new'
 delete 'signout', to: 'sessions#destroy'
 get 'places', to: 'places#index'
 post 'places', to:'places#search'
+get 'beerlist', to:'beers#list'
+get 'ngbeerlist', to:'beers#nglist'
+get 'brewerylist', to:'breweries#nglist'
 resources :ratings, only: [:index, :new, :create, :destroy]
 resource :session, only: [:new, :create, :destroy]
 resources :places, only:[:index, :show]
